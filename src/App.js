@@ -9,6 +9,9 @@ import Inbox from "./Components/Profile/Inbox";
 import { useDispatch } from "react-redux";
 import { inboxItemFill } from "./store/inbox-slice";
 import EmailMessage from "./Components/Profile/EmailMessage";
+import SentBox from "./Components/Profile/SentBox";
+import { sentboxItemFill } from "./store/sentbox-slice";
+import Profile from "./Components/Profile/Profile";
 
 function App() {
 
@@ -16,16 +19,21 @@ function App() {
 
   useEffect(() => {
     dispatch(inboxItemFill(localStorage.getItem('userEmail')))
+    dispatch(sentboxItemFill(localStorage.getItem('userEmail')))
   }, [])
+
   return (
     <div className="App">
       <Routes>
         <Route path="/" element={<RootLayout />}>
           <Route index element={<Authentication />} />
           <Route path="/profile" element={<Root2Layout />} exact>
+            <Route index element={<Profile />} />
             <Route path="/profile/compose" element={<Compose />} exact/>
             <Route path="/profile/inbox" element={<Inbox />} exact/>
             <Route path="/profile/inbox/message" element={<EmailMessage />} exact/>
+            <Route path="/profile/sentbox" element={<SentBox />} exact/>
+            <Route path="/profile/sentbox/message" element={<EmailMessage />} exact/>
           </Route>
         </Route>
       </Routes>

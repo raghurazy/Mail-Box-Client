@@ -3,6 +3,7 @@ import { Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { inboxActions, inboxItemFill } from "../../store/inbox-slice";
+import { sentboxItemFill } from "../../store/sentbox-slice";
 
 import classes from "./SideBar.module.css";
 
@@ -28,6 +29,11 @@ const SideBar = () => {
     }
   });
 
+  const sentboxClickHandler = async () => {
+    navigate("/profile/sentbox", { replace: true });
+    dispatch(sentboxItemFill(auth.email));
+  };
+
   return (
     <Fragment>
       <div className={classes.mailCon}>
@@ -49,7 +55,7 @@ const SideBar = () => {
             </tr>
             <tr>
               <td>
-                <Button variant="outline-success">Sentbox</Button>
+                <Button variant="outline-success" onClick={sentboxClickHandler}>Sentbox</Button>
               </td>
             </tr>
             <tr>
