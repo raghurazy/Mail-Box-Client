@@ -16,6 +16,11 @@ const inboxSlice = createSlice({
         state.messageOpen = action.payload[1];
         const msgopen = JSON.stringify(action.payload[1]);
         localStorage.setItem('message open', msgopen);
+    },
+    removeItem(state, action) {
+        const filterItems = state.inboxItems.filter(element => element[0] !== action.payload[0]);
+        // console.log(filter);
+        state.inboxItems = filterItems;
     }
   },
 });
@@ -30,7 +35,7 @@ export const inboxItemFill = (email) => {
         `https://mail-box-91259-default-rtdb.firebaseio.com/${userEmail}/recievedEmails.json`
       );
       const data = await resInbox.json();
-      console.log(data)
+    //   console.log(data)
 
       if (resInbox.ok) {
         dispatch(inboxActions.addItems(Object.entries(data)));

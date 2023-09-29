@@ -6,6 +6,7 @@ import classes from "./Inbox.module.css";
 import { GoDotFill, GoDot } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 import { inboxActions } from "../../store/inbox-slice";
+import { MdDelete } from "react-icons/md";
 
 const Inbox = () => {
   const inboxItem = useSelector((state) => state.inbox.inboxItems);
@@ -18,7 +19,7 @@ const Inbox = () => {
     console.log(item);
     navigate("/profile/inbox/message", { replace: true });
     dispatch(inboxActions.addMessageOpen(item));
-    
+
     const email = auth.email.replace(/[\.@]/g, "");
     try {
       const resEmail = await fetch(
@@ -40,6 +41,19 @@ const Inbox = () => {
       );
     } catch (error) {
       alert(error);
+    }
+  };
+
+  const clickDeleteHandler = async (deleteItem) => {
+    // console.log(item);
+    dispatch(inboxActions.removeItem(deleteItem));
+    const email = auth.email.replace(/[\.@]/g, "");
+    try {
+        const resDlt = await fetch(`https://mail-box-91259-default-rtdb.firebaseio.com/${email}/recievedEmails/${deleteItem[0]}.json`,{
+            method: 'DELETE'
+        })
+    } catch(error) {
+        alert(error);
     }
   };
 
@@ -72,6 +86,16 @@ const Inbox = () => {
               <td>{i[1].emailSub}</td>
               <td>{i[1].from}</td>
               <td>{i[1].date}</td>
+              <td>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    clickDeleteHandler(i);
+                  }}
+                >
+                  <MdDelete style={{ color: "red", border: "black" }} />
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>
