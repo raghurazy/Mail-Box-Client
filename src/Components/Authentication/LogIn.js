@@ -42,7 +42,7 @@ function LogIn() {
 
       if (resLogin.ok) {
         console.log("Logged IN");
-        dispatch(authActions.login({tokenId: data.idToken}));
+        dispatch(authActions.login({tokenId: data.idToken, email: enteredEmail}));
         navigate('/profile',{replace: true});
 
       } else {
