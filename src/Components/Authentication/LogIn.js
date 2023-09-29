@@ -1,17 +1,44 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { authActions } from "../../store/auth-slice";
+import { inboxActions, inboxItemFill } from "../../store/inbox-slice";
 
 function LogIn() {
   const emailInputRef = useRef();
   const passInputRef = useRef();
   const [inputRequire, setInputRequire] = useState(false);
   const dispatch = useDispatch();
-  const auth = useSelector(state => state.auth);
+  const auth = useSelector((state) => state.auth);
   const navigate = useNavigate();
+
+  // const inboxItemFill = async () => {
+  //   // Fill Inbox ----------------
+  //   let email;
+  //   if(auth.email === null){
+  //     email = emailInputRef.current.value.replace(/[\.@]/g, "");
+  //   } else {
+  //     email = localStorage.getItem('userEmail').replace(/[\.@]/g, "");
+  //   }
+  //   try {
+  //     const resInbox = await fetch(
+  //       `https://mail-box-myreact-default-rtdb.firebaseio.com/${email}/recievedEmails.json`
+  //     );
+
+  //     const data = await resInbox.json();
+  //     // console.log(Object.values(data));
+
+  //     if (resInbox.ok) {
+  //       dispatch(inboxActions.addItems(Object.values(data)));
+  //     }
+  //   } catch (error) {
+  //     alert(error);
+  //   }
+  // };
+
+  
 
   const loginSubmitHandler = async (event) => {
     event.preventDefault();
@@ -35,16 +62,18 @@ function LogIn() {
           }),
           headers: {
             "content-type": "application/json",
-          }
+          },
         }
       );
       const data = await resLogin.json();
 
       if (resLogin.ok) {
         console.log("Logged IN");
-        dispatch(authActions.login({tokenId: data.idToken, email: enteredEmail}));
-        navigate('/profile',{replace: true});
-
+        dispatch(
+          authActions.login({ tokenId: data.idToken, email: enteredEmail })
+        );
+        dispatch(inboxItemFill(enteredEmail));
+        navigate("/profile", { replace: true });
       } else {
         throw new Error("Login failed.");
       }
@@ -53,6 +82,12 @@ function LogIn() {
     }
   };
 
+  // useEffect(()=> {
+  //   dispatch(inboxItemFill(localStorage.getItem('userEmail')))
+  //   console.log('object');
+  // }, [auth.email])
+ 
+  
   return (
     <Form>
       {inputRequire && <p style={{ color: "red" }}>*Please fill all inputs.</p>}

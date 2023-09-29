@@ -2,56 +2,49 @@ import React, { Fragment } from "react";
 import { Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { inboxActions } from "../../store/inbox-slice";
+import { inboxActions, inboxItemFill } from "../../store/inbox-slice";
 
-import classes from './SideBar.module.css';
+import classes from "./SideBar.module.css";
 
 const SideBar = () => {
-
   const navigate = useNavigate();
-  const auth = useSelector(state => state.auth);
-  const inboxItem = useSelector(state => state.inbox.inboxItems)
+  const auth = useSelector((state) => state.auth);
+  const inboxItem = useSelector((state) => state.inbox.inboxItems);
   const dispatch = useDispatch();
+  const inboxItems = useSelector((state) => state.inbox.inboxItems);
 
-  const composeClickHandler = () =>{
-    navigate('/profile/compose', {replace: true});
-  }
+  const composeClickHandler = () => {
+    navigate("/profile/compose", { replace: true });
+  };
 
   const inboxClickHandler = async () => {
-    navigate('/profile/inbox', {replace: true});
-    
-    const email = auth.email.replace(/[\.@]/g, "");
-    try{
-      const resInbox = await fetch(`https://mail-box-91259-default-rtdb.firebaseio.com/${email}/recievedEmails.json`);
-
-      const data = await resInbox.json();
-      console.log(Object.values(data));
-
-      if(resInbox.ok){
-        dispatch(inboxActions.addItems(Object.values(data)))
-      }
-    } catch(error) {
-      alert(error);
+    navigate("/profile/inbox", { replace: true });
+    dispatch(inboxItemFill(auth.email));
+  };
+  let totalUnread = 0;
+  inboxItems.forEach((element) => {
+    if (element[1].unread) {
+      totalUnread++;
     }
-  }
-
-
+  });
 
   return (
-    <Fragment >
-        <div className={classes.mailCon}>
+    <Fragment>
+      <div className={classes.mailCon}>
         <table>
           <tbody>
             <tr>
               <td>
-              <Button variant="primary" onClick={composeClickHandler}>
+                <Button variant="primary" onClick={composeClickHandler}>
                   Compose
                 </Button>
               </td>
             </tr>
             <tr>
               <td>
-                <Button variant="outline-secondary" onClick={inboxClickHandler}>Inbox</Button>
+                <Button variant="outline-secondary" onClick={inboxClickHandler}>
+                  Inbox<p style={{ color: "red" }}>unread {totalUnread}</p>
+                </Button>
               </td>
             </tr>
             <tr>
@@ -81,7 +74,7 @@ const SideBar = () => {
             </tr>
           </tbody>
         </table>
-      </div>  
+      </div>
     </Fragment>
   );
 };
