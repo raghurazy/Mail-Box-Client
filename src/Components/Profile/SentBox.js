@@ -3,7 +3,6 @@ import { Table } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 
 import classes from "./SentBox.module.css";
-import { GoDotFill, GoDot } from "react-icons/go";
 import { useNavigate } from "react-router-dom";
 import { sentboxActions } from "../../store/sentbox-slice";
 import { MdDelete } from "react-icons/md";
@@ -24,11 +23,14 @@ const SentBox = () => {
     const clickDeleteHandler = async (deleteItem) => {
       // console.log(item);
       dispatch(sentboxActions.removeItem(deleteItem));
-      const email = auth.email.replace(/[\.@]/g, "");
+      const email = auth.email.replace(/[.@]/g, "");
       try {
-          const resDlt = await fetch(`https://mail-box-myreact-default-rtdb.firebaseio.com/${email}/sentEmails/${deleteItem[0]}.json`,{
+          const resDlt = await fetch(`https://mail-box-91259-default-rtdb.firebaseio.com/${email}/sentEmails/${deleteItem[0]}.json`,{
               method: 'DELETE'
           })
+          if(!resDlt.ok){
+            throw Error ('Failed to delete')
+        }
       } catch(error) {
           alert(error);
       }

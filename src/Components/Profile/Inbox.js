@@ -20,8 +20,8 @@ const Inbox = () => {
     navigate("/profile/inbox/message", { replace: true });
     dispatch(inboxActions.addMessageOpen(item));
 
-    const email = auth.email.replace(/[\.@]/g, "");
-    try {
+    const email = auth.email.replace(/[.@]/g, "");
+    try { 
       const resEmail = await fetch(
         `https://mail-box-91259-default-rtdb.firebaseio.com/${email}/recievedEmails/${item[0]}.json`,
         {
@@ -39,6 +39,9 @@ const Inbox = () => {
           },
         }
       );
+      if(!resEmail.ok){
+          throw Error ('error')
+      }
     } catch (error) {
       alert(error);
     }
@@ -47,11 +50,14 @@ const Inbox = () => {
   const clickDeleteHandler = async (deleteItem) => {
     // console.log(item);
     dispatch(inboxActions.removeItem(deleteItem));
-    const email = auth.email.replace(/[\.@]/g, "");
+    const email = auth.email.replace(/[.@]/g, "");
     try {
         const resDlt = await fetch(`https://mail-box-91259-default-rtdb.firebaseio.com/${email}/recievedEmails/${deleteItem[0]}.json`,{
             method: 'DELETE'
         })
+        if(!resDlt.ok){
+            throw Error ('Failed to delete')
+        }
     } catch(error) {
         alert(error);
     }
@@ -72,9 +78,10 @@ const Inbox = () => {
         <tbody>
           {inboxItem.map((i) => (
             <tr
+            className={classes.tblRow}
               onClick={() => clickEmailHanler(i)}
-              className={i[1].unread ? classes.unreadRow : ""}
-              key={i[0]}
+            //   className={i[1].unread ? classes["unreadRow"] : ""}
+              key={i[1].id}
             >
               <td>
                 {i[1].unread ? (

@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Authentication from "./Components/Authentication/Authentication";
@@ -12,42 +12,65 @@ import EmailMessage from "./Components/Profile/EmailMessage";
 import SentBox from "./Components/Profile/SentBox";
 import { sentboxItemFill } from "./store/sentbox-slice";
 import Profile from "./Components/Profile/Profile";
+import SentMessageRead from "./Components/Profile/SentMessageRead";
 
 function App() {
-
   const dispatch = useDispatch();
-  const auth = useSelector(state => state.auth)
+  const auth = useSelector((state) => state.auth);
+
+  const intervalRef = useRef(null);
 
   useEffect(() => {
-    if(localStorage.getItem('userEmail')){
-      dispatch(inboxItemFill(localStorage.getItem('userEmail')))
-      dispatch(sentboxItemFill(localStorage.getItem('userEmail')))
+    if (auth.isLoggedIn) {
+      dispatch(inboxItemFill(auth.email));
+      dispatch(sentboxItemFill(auth.email));
     }
-    
-  }, [])
+  })
+
+  useEffect(() => {
+    if (auth.isLoggedIn) {
+      dispatch(inboxItemFill(auth.email));
+      dispatch(sentboxItemFill(auth.email));
+
+      // Start the interval and store the reference
+      intervalRef.current = setInterval(() => {
+        dispatch(inboxItemFill(auth.email));
+        dispatch(sentboxItemFill(auth.email));
+        console.log("render");
+      }, 2000);
+    }
+
+    // Clean up the interval when the component unmounts or when auth.isLoggedIn changes to false
+    return () => {
+      clearInterval(intervalRef.current);
+    };
+  }, [auth.isLoggedIn, dispatch, auth.email]);
+
   
-  setInterval(() => {
-    if(localStorage.getItem('userEmail')){
-      dispatch(inboxItemFill(localStorage.getItem('userEmail')))
-      dispatch(sentboxItemFill(localStorage.getItem('userEmail')))
-      console.log('render');
-    }
-    
-  }, 2000);
 
   return (
     <div className="App">
       <Routes>
         <Route path="/" element={<RootLayout />}>
           <Route index element={<Authentication />} />
-          {auth.isLoggedIn && <Route path="/profile" element={<Root2Layout />} exact>
-            <Route index element={<Profile />} />
-            <Route path="/profile/compose" element={<Compose />} exact/>
-            <Route path="/profile/inbox" element={<Inbox />} exact/>
-            <Route path="/profile/inbox/message" element={<EmailMessage />} exact/>
-            <Route path="/profile/sentbox" element={<SentBox />} exact/>
-            <Route path="/profile/sentbox/message" element={<EmailMessage />} exact/>
-          </Route>}
+          {auth.isLoggedIn && (
+            <Route path="/profile" element={<Root2Layout />} exact>
+              <Route index element={<Profile />} />
+              <Route path="/profile/compose" element={<Compose />} exact />
+              <Route path="/profile/inbox" element={<Inbox />} exact />
+              <Route
+                path="/profile/inbox/message"
+                element={<EmailMessage />}
+                exact
+              />
+              <Route path="/profile/sentbox" element={<SentBox />} exact />
+              <Route
+                path="/profile/sentbox/message"
+                element={<SentMessageRead />}
+                exact
+              />
+            </Route>
+          )}
         </Route>
       </Routes>
     </div>

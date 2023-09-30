@@ -8,3 +8,9 @@
     height: auto;
     padding: 2rem;
 }
+
+@media (max-width: 840px){
+    .card{
+        width: 100%;
+    }
+}

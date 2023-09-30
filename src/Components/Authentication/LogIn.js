@@ -1,17 +1,16 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { authActions } from "../../store/auth-slice";
-import { inboxActions, inboxItemFill } from "../../store/inbox-slice";
+import { inboxItemFill } from "../../store/inbox-slice";
 
 function LogIn() {
   const emailInputRef = useRef();
   const passInputRef = useRef();
   const [inputRequire, setInputRequire] = useState(false);
   const dispatch = useDispatch();
-  const auth = useSelector((state) => state.auth);
   const navigate = useNavigate();
 
   // const inboxItemFill = async () => {
@@ -68,7 +67,7 @@ function LogIn() {
       const data = await resLogin.json();
 
       if (resLogin.ok) {
-        console.log("Logged IN");
+        // console.log("Logged IN");
         dispatch(
           authActions.login({ tokenId: data.idToken, email: enteredEmail })
         );
@@ -81,11 +80,6 @@ function LogIn() {
       alert(error);
     }
   };
-
-  // useEffect(()=> {
-  //   dispatch(inboxItemFill(localStorage.getItem('userEmail')))
-  //   console.log('object');
-  // }, [auth.email])
  
   
   return (

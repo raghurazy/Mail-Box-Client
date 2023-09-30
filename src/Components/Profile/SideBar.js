@@ -2,15 +2,15 @@ import React, { Fragment } from "react";
 import { Button } from "react-bootstrap";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { inboxActions, inboxItemFill } from "../../store/inbox-slice";
+import { inboxItemFill } from "../../store/inbox-slice";
 import { sentboxItemFill } from "../../store/sentbox-slice";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 import classes from "./SideBar.module.css";
 
 const SideBar = () => {
   const navigate = useNavigate();
   const auth = useSelector((state) => state.auth);
-  const inboxItem = useSelector((state) => state.inbox.inboxItems);
   const dispatch = useDispatch();
   const inboxItems = useSelector((state) => state.inbox.inboxItems);
 
@@ -37,7 +37,7 @@ const SideBar = () => {
   return (
     <Fragment>
       <div className={classes.mailCon}>
-        <table>
+        <table className="d-md-table">
           <tbody>
             <tr>
               <td>

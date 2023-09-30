@@ -1,5 +1,4 @@
-import React, { Fragment } from "react";
-import { propTypes } from "react-bootstrap/esm/Image";
+import React from "react";
 
 import classes from './Card.module.css';
 
